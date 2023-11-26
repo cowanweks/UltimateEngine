@@ -1,0 +1,91 @@
+cmake_minimum_required(VERSION 3.21.0 FATAL_ERROR)
+
+add_subdirectory(libs/glfw)
+
+project(UEditor LANGUAGES C CXX ASM)
+
+
+include_directories(
+
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/sources/**/include
+    ${PROJECT_SOURCE_DIR}/libs/entt/include
+    ${PROJECT_SOURCE_DIR}/libs/imgui/include
+    ${PROJECT_SOURCE_DIR}/libs/glfw/include
+    ${PROJECT_SOURCE_DIR}/libs/filewatch/include
+    ${PROJECT_SOURCE_DIR}/libs/glm
+    ${PROJECT_SOURCE_DIR}/libs/spdlog/include
+    ${PROJECT_SOURCE_DIR}/libs/stb_image
+    ${PROJECT_SOURCE_DIR}/libs/yaml-cpp
+
+    # The vulkan SDK include path
+    $ENV{VULKAN_SDK}/include
+)
+
+# Library directories
+link_directories(
+    # The vulkan SDK library path
+    $ENV{VULKAN_SDK}/lib
+)
+
+add_definitions(
+    -D_DEBUG
+)
+
+file(GLOB_RECURSE SOURCES
+
+ # Application Source files
+ "${PROJECT_SOURCE_DIR}/sources/*.c"
+ "${PROJECT_SOURCE_DIR}/sources/*.cpp"
+ "${PROJECT_SOURCE_DIR}/sources/**/*.c"
+ "${PROJECT_SOURCE_DIR}/sources/**/*.cpp"
+
+  # Imgui implementations
+ "${PROJECT_SOURCE_DIR}/libs/imgui/src/*.c"
+ "${PROJECT_SOURCE_DIR}/libs/imgui/src/*.cpp"
+)
+
+
+
+# Resource files
+file(GLOB_RECURSE RESOURCES
+    "${PROJECT_SOURCE_DIR}/resources/**.rc"
+)
+
+# Libraries
+
+set(LIBS opengl32 Dwmapi d3dcompiler gdi32 glfw vulkan-1)
+
+
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${RESOURCES})
+
+
+if(-D_DEBUG)
+
+    if(MSVC)
+
+        set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:CONSOLE")
+
+    else()
+
+        set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "-mconsole")
+
+    endif()
+
+else()
+
+    if(MSVC)
+
+        set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+
+    else()
+
+        set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "-mwindows")
+
+    endif()
+
+endif()
+
+
+
+target_link_libraries(${CMAKE_PROJECT_NAME} ${LIBS})
