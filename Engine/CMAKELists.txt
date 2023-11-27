@@ -1,0 +1,42 @@
+cmake_minimum_required(VERSION 3.21.0 FATAL_ERROR)
+
+# add_subdirectory(Editor)
+# add_subdirectory(Engine)
+
+project(Engine LANGUAGES C CXX ASM)
+
+
+include_directories(
+
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/Audio/**/include
+    ${PROJECT_SOURCE_DIR}/Core/**/include
+    ${PROJECT_SOURCE_DIR}/Graphics/**/include
+    ${PROJECT_SOURCE_DIR}/Physics/**/include
+
+    # The vulkan SDK include path
+    $ENV{VULKAN_SDK}/include
+)
+
+# Library directories
+link_directories(
+    # The vulkan SDK library path
+    $ENV{VULKAN_SDK}/lib
+)
+
+file(GLOB_RECURSE SOURCES
+
+    # Application Source files
+
+    ${PROJECT_SOURCE_DIR}/Audio/**/*.c
+    ${PROJECT_SOURCE_DIR}/Core/**/*.c
+    ${PROJECT_SOURCE_DIR}/Graphics/**/*.c
+    ${PROJECT_SOURCE_DIR}/Physics/**/*.c
+
+    ${PROJECT_SOURCE_DIR}/Audio/**/*.cpp
+    ${PROJECT_SOURCE_DIR}/Core/**/*.cpp
+    ${PROJECT_SOURCE_DIR}/Graphics/**/*.cpp
+    ${PROJECT_SOURCE_DIR}/Physics/**/*.cpp
+)
+
+add_library(uengine SHARED )
